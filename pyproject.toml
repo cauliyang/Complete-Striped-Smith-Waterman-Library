@@ -9,6 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.8"
 pybind11 = "^2.10.0"
+setuptools = "^65.4.1"
 
 
 [tool.poetry.group.dev.dependencies]
