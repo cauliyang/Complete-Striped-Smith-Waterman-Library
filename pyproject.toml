@@ -5,6 +5,7 @@ description = "Modern Cpp binding for complete-striped-smith-watern-library"
 authors = ["Yangyang Li <yangyang.li@northwestern.edu>"]
 license = "MIT"
 readme = "README.md"
+packages = [{ "include" = "mssw" }]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -15,6 +16,11 @@ pybind11 = "^2.10.0"
 black = "^22.8.0"
 pre-commit-hooks = "^4.3.0"
 
+
+[tool.poetry.build]
+script = "build.py"
+
+
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core", "pybind11>2.9.1"]
 build-backend = "poetry.core.masonry.api"
