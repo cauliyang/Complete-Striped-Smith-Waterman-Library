@@ -1,3 +1,5 @@
+[![Release](https://github.com/cauliyang/Complete-Striped-Smith-Waterman-Library/actions/workflows/release.yml/badge.svg)](https://github.com/cauliyang/Complete-Striped-Smith-Waterman-Library/actions/workflows/release.yml)
+
 # Modern C++ Binding for SSW Library
 
 ## Changes
