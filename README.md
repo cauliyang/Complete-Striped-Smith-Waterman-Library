@@ -1,4 +1,10 @@
-# SSW Library
+# Modern C++ Binding for SSW Library
+
+## Changes
+
+- Add Modern C++ Binding
+- Use pybind11 Binding
+- Provide Python api
 
 ## An SIMD Smith-Waterman C/C++/Python/Java/R Library for Use in Genomic Applications
 

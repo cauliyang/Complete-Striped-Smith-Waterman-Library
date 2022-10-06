@@ -3,7 +3,4 @@
 __version__ = "0.0.1"
 __PACKAGE_NAME__ = "mssw"
 
-from ._cpp import * # type ignore 
-
-
-
+from ._cpp import *  # type ignore
