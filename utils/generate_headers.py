@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Generate headers for all files in one header file.
 
 @author: YangyangLi
@@ -19,7 +18,7 @@ def replace_to_arrow(string: str) -> str:
 
 def get_headers_from_file(path: Path) -> t.Iterator[str]:
     """Get headers from file."""
-    with open(path, "r") as f:
+    with open(path) as f:
         for line in f:
             if line.startswith("#include"):
                 yield replace_to_arrow(line.strip())

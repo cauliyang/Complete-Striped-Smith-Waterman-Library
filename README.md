@@ -13,18 +13,20 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Authors:
-* C implementation: Mengyao Zhao
-* C++ wrapper: Wan-Ping Lee
-* Python wrapper: Yongan Zhao
-* Java wrapper: Daniel Cameron
-* R package: Nan Xiao
+
+- C implementation: Mengyao Zhao
+- C++ wrapper: Wan-Ping Lee
+- Python wrapper: Yongan Zhao
+- Java wrapper: Daniel Cameron
+- R package: Nan Xiao
 
 Contact:
-* Mengyao Zhao <zhaomengyao@gmail.com>
-* Wan-Ping Lee <wanping.lee@gmail.com>
-* Yongan Zhao <zhaoyanswill@gmail.com>
-* Daniel Cameron <cameron.d@wehi.edu.au>
-* Nan Xiao <me@nanx.me>
+
+- Mengyao Zhao <zhaomengyao@gmail.com>
+- Wan-Ping Lee <wanping.lee@gmail.com>
+- Yongan Zhao <zhaoyanswill@gmail.com>
+- Daniel Cameron <cameron.d@wehi.edu.au>
+- Nan Xiao <me@nanx.me>
 
 Last revision: 2022-May-20
 
@@ -63,13 +65,13 @@ The API function descriptions are in the file `ssw_cpp.h`. A simple example of u
 
 Test data set:
 
-* Target sequence: reference genome of _E. coli_ strain 536 (4,938,920 nucleotides) from NCBI
-* Query sequences: 1000 reads of Ion Torrent sequenced _E. coli_ strain DH10B (C23-140, 318 PGM Run, 11/2011), read length: ~25-540 bp, most reads are ~200 bp
+- Target sequence: reference genome of _E. coli_ strain 536 (4,938,920 nucleotides) from NCBI
+- Query sequences: 1000 reads of Ion Torrent sequenced _E. coli_ strain DH10B (C23-140, 318 PGM Run, 11/2011), read length: ~25-540 bp, most reads are ~200 bp
 
 CPU time:
 
-* AMD CPU: default penalties: ~880 seconds; -m1 -x3 -o5 -e2: ~460 seconds
-* Intel CPU: default penalties: ~960 seconds; -m1 -x3 -o5 -e2: ~500 seconds
+- AMD CPU: default penalties: ~880 seconds; -m1 -x3 -o5 -e2: ~460 seconds
+- Intel CPU: default penalties: ~960 seconds; -m1 -x3 -o5 -e2: ~500 seconds
 
 Memory usage: ~40MB
 
@@ -100,7 +102,7 @@ Options:
 
 ### Software input
 
-The input files can be in FASTA or FASTQ format. Both target and query files can contain multiple sequences. Each sequence in the query file will be aligned with all sequences in the target file. If your target file has N sequences and your query file has M sequences, the results will have M*N alignments.
+The input files can be in FASTA or FASTQ format. Both target and query files can contain multiple sequences. Each sequence in the query file will be aligned with all sequences in the target file. If your target file has N sequences and your query file has M sequences, the results will have M\*N alignments.
 
 ### Software output
 
@@ -167,8 +169,8 @@ gcc -Wall -O3 -pipe -fPIC -shared -rdynamic -o libssw.so ssw.c ssw.h
 
 3. The `LD_LIBRARY_PATH` environment variable may need to be modified to include the directory of the dynamic library `libssw.so` by one of the two following mathods:
 
-    * ```export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:path_of_libssw.so```
-    * For a definitive inclusion edit `/etc/ld.so.conf` and add the path of the `libssw.so`. Then, update the cache by `/sbin/ldconfig`.
+   - `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:path_of_libssw.so`
+   - For a definitive inclusion edit `/etc/ld.so.conf` and add the path of the `libssw.so`. Then, update the cache by `/sbin/ldconfig`.
 
 4. In a Python script or in a interactive interpreter, import the CSsw class by: `from ssw_lib import CSsw` or `import ssw_lib` and then call `ssw_lib.CSsw`.
 
@@ -241,12 +243,12 @@ Only the C, C++, and C shared libraries are generated from the default make goal
 
 The Java wrapper consist of the following components:
 
-* `libsswjni.so`: native C library exposing the JNI entry points
-* `ssw.jar` is a Java library containing the Java interface to the native C library. This small wrapper library is composed of:
+- `libsswjni.so`: native C library exposing the JNI entry points
+- `ssw.jar` is a Java library containing the Java interface to the native C library. This small wrapper library is composed of:
 
-    * `ssw.Aligner` Java class: a thread-safe static class that exposes two `align()` methods. The first exposes the SSW C library directly. No error checking is performed on arguments passed to this method and misuse is highly likely to crash the JVM. The second `align()` method is a more user-friendly entry point that exposes a simpler API and performs some basic error checking.
-    * `ssw.Alignment` Java class: this class stores alignment results. Each each field has a direct correspondence and identical meaning to the C s_align struct.
-    * `ssw.Example` Java class: Java version of the example_c sample code. Run `java -jar ssw.jar` to execute the sample.
+  - `ssw.Aligner` Java class: a thread-safe static class that exposes two `align()` methods. The first exposes the SSW C library directly. No error checking is performed on arguments passed to this method and misuse is highly likely to crash the JVM. The second `align()` method is a more user-friendly entry point that exposes a simpler API and performs some basic error checking.
+  - `ssw.Alignment` Java class: this class stores alignment results. Each each field has a direct correspondence and identical meaning to the C s_align struct.
+  - `ssw.Example` Java class: Java version of the example_c sample code. Run `java -jar ssw.jar` to execute the sample.
 
 To use the library, either reference the `ssw.jar` or including the Aligner and Alignment classes directly. As for any JNI library, the native library must be loaded (using `System.loadLibrary("sswjni")` or similar) before invokation of native methods. For the JVM to find the library, ensure that either the library is included in the `LD_LIBRARY_PATH` environment variable, or `-Djava.library.path=<directory containing libsswjni.so>` is set on the Java command line.
 
