@@ -13,19 +13,19 @@
 
 #include "ssw_cpp.h"
 
-using std::string;
 using std::cout;
 using std::endl;
+using std::string;
 
-static void PrintAlignment(const StripedSmithWaterman::Alignment& alignment);
+static void PrintAlignment(const StripedSmithWaterman::Alignment &alignment);
 
 int main() {
-  const string ref   = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA";
+  const string ref = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA";
   const string query = "CTGAGCCGGTAAATC";
-  int32_t maskLen = strlen(query.c_str())/2;
+  int32_t maskLen = strlen(query.c_str()) / 2;
   maskLen = maskLen < 15 ? 15 : maskLen;
-  //const string ref   = "CCGTTTATCGCA";
-  //const string query = "CCTTTTATCGCA";
+  // const string ref   = "CCGTTTATCGCA";
+  // const string query = "CCTTTTATCGCA";
 
   // Declares a default Aligner
   StripedSmithWaterman::Aligner aligner;
@@ -34,17 +34,19 @@ int main() {
   // Declares an alignment that stores the result
   StripedSmithWaterman::Alignment alignment;
   // Aligns the query to the ref
-  aligner.Align(query.c_str(), ref.c_str(), ref.size(), filter, &alignment, maskLen);
+  aligner.Align(query.c_str(), ref.c_str(), ref.size(), filter, &alignment,
+                maskLen);
 
   PrintAlignment(alignment);
 
   return 0;
 }
 
-static void PrintAlignment(const StripedSmithWaterman::Alignment& alignment){
+static void PrintAlignment(const StripedSmithWaterman::Alignment &alignment) {
   cout << "===== SSW result =====" << endl;
   cout << "Best Smith-Waterman score:\t" << alignment.sw_score << endl
-       << "Next-best Smith-Waterman score:\t" << alignment.sw_score_next_best << endl
+       << "Next-best Smith-Waterman score:\t" << alignment.sw_score_next_best
+       << endl
        << "Reference start:\t" << alignment.ref_begin << endl
        << "Reference end:\t" << alignment.ref_end << endl
        << "Query start:\t" << alignment.query_begin << endl

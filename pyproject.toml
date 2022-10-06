@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "mssw"
+version = "0.1.0"
+description = "Modern Cpp binding for complete-striped-smith-watern-library"
+authors = ["Yangyang Li <yangyang.li@northwestern.edu>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

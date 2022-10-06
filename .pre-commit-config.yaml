@@ -1,0 +1,18 @@
+fail_fast: false
+repos:
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+      - id: clang-format
+        args: [-i]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 1f6de3d70391131fac4b911ae913c568e571e34e
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.output
+      - id: end-of-file-fixer
+        exclude: \.(cp?p?$|output)
+      - id: check-docstring-first
+      - id: check-added-large-files
+      - id: check-yaml
