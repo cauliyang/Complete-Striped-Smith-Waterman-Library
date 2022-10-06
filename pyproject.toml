@@ -21,5 +21,5 @@ pre-commit-hooks = "^4.3.0"
 script = "build.py"
 
 [build-system]
-requires = ["pybind11>2.9.1", "poetry-core>=1.2.0"]
+requires = ["pybind11>2.9.1", "poetry-core>=1.2.0", "setuptools>=40.6.0"]
 build-backend = "poetry.core.masonry.api"
