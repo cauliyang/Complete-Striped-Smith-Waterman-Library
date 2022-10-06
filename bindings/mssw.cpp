@@ -11,8 +11,8 @@ typedef std::function<pybind11::module &(std::string const &)> ModuleGetter;
 
 void bind_ssw_cpp20(std::function<pybind11::module &(std::string const &namespace_)> &M);
 
-PYBIND11_MODULE(mssw, root_module) {
-  root_module.doc() = "mssw module";
+PYBIND11_MODULE(_cpp, root_module) {
+  root_module.doc() = "_cpp module";
 
   std::map<std::string, pybind11::module> modules;
   ModuleGetter M = [&](std::string const &namespace_) -> pybind11::module & {

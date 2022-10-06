@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 pybind11 = "^2.10.0"
 
 
@@ -19,7 +19,7 @@ pre-commit-hooks = "^4.3.0"
 [tool.poetry.build]
 script = "build.py"
 
-
 [build-system]
-requires = ["poetry-core", "pybind11>2.9.1"]
+requires = ["pybind11>2.9.1", "poetry-core>=1.2.0"]
 build-backend = "poetry.core.masonry.api"
+

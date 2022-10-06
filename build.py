@@ -48,11 +48,10 @@ def build(setup_kwargs):
     """Build cpp extension."""
     ext_modules = [
         Pybind11Extension(
-            "mssw.cpp",
+            "mssw._cpp",
             sources=["src/mssw/src/ssw.c", "src/mssw/src/ssw_cpp20.cpp"]
             + list(get_files("bindings", [".cpp", ".c"])),
             include_dirs=["src/mssw/src"],
-            library_dirs=[],
             libraries=["m", "z"],
             extra_comiple_args=get_extra_options(),
         )

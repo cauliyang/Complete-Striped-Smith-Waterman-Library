@@ -19,7 +19,7 @@ clean: ## clean previous binding directory
 bind:  clean  all_include ## make bindings for python
 	#https://cppbinder.readthedocs.io/en/latest/config.html
 	docker run -it --rm -v `pwd`:/bind yangliz5/binder:1.0.1 \
-	  binder --root-module mssw \
+	  binder --root-module _cpp \
 	  --prefix /bind/bindings \
 	  --bind ${NAMESPACE} \
 	  /bind/all_includes.hpp \
