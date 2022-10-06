@@ -26,10 +26,8 @@ public class Example {
       }
     }
     System.out.println("Aligning nucleotides");
-    Alignment aln =
-        Aligner.align("CTGAGCCGGTAAATC".getBytes(),
-                      "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA".getBytes(),
-                      score, 3, 1, true);
+    Alignment aln = Aligner.align("CTGAGCCGGTAAATC".getBytes(),
+        "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA".getBytes(), score, 3, 1, true);
     if (aln == null) {
       throw new RuntimeException();
     }

@@ -1,4 +1,4 @@
-# YOU need to change 
+# YOU need to change
 
 SOURCE := utils
 BLOCK := arm sse emm
@@ -28,4 +28,3 @@ bind:  clean  all_include ## make bindings for python
 	  -DMY_PROJECT_DEFINE -DNDEBUG
 
 	 echo "Binding Cpp to python"
-

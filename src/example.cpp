@@ -8,8 +8,9 @@
 // Last revision by Mengyao Zhao on 2017-06-05
 // ==========================
 
-#include <iostream>
 #include <string.h>
+
+#include <iostream>
 
 #include "ssw_cpp.h"
 
@@ -34,8 +35,7 @@ int main() {
   // Declares an alignment that stores the result
   StripedSmithWaterman::Alignment alignment;
   // Aligns the query to the ref
-  aligner.Align(query.c_str(), ref.c_str(), ref.size(), filter, &alignment,
-                maskLen);
+  aligner.Align(query.c_str(), ref.c_str(), ref.size(), filter, &alignment, maskLen);
 
   PrintAlignment(alignment);
 
@@ -45,8 +45,7 @@ int main() {
 static void PrintAlignment(const StripedSmithWaterman::Alignment &alignment) {
   cout << "===== SSW result =====" << endl;
   cout << "Best Smith-Waterman score:\t" << alignment.sw_score << endl
-       << "Next-best Smith-Waterman score:\t" << alignment.sw_score_next_best
-       << endl
+       << "Next-best Smith-Waterman score:\t" << alignment.sw_score_next_best << endl
        << "Reference start:\t" << alignment.ref_begin << endl
        << "Reference end:\t" << alignment.ref_end << endl
        << "Query start:\t" << alignment.query_begin << endl

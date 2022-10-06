@@ -31,16 +31,16 @@ public class Aligner {
    * the best alignment beginning position and cigar;
    */
   public static final int
-      FLAG_INCLUDE_BEST_ALIGNMENT_POSITION_AND_CIGAR_IF_MORE_THAN_FILTER_DISTANCE_POSITIONS_ALIGNED =
-          0x04;
+      FLAG_INCLUDE_BEST_ALIGNMENT_POSITION_AND_CIGAR_IF_MORE_THAN_FILTER_DISTANCE_POSITIONS_ALIGNED
+      = 0x04;
   /**
    * bit 7: when setted as 1, if the best alignment score >= filters, (whatever
    * bit 5 is setted) the function will return the best alignment beginning
    * position and cigar;
    */
   public static final int
-      FLAG_INCLUDE_BEST_ALIGNMENT_POSITION_AND_CIGAR_IF_SCORE_GREATER_THAN_FILTER_SORE =
-          0x02;
+      FLAG_INCLUDE_BEST_ALIGNMENT_POSITION_AND_CIGAR_IF_SCORE_GREATER_THAN_FILTER_SORE
+      = 0x02;
   /**
    * bit 8: when setted as 1, (whatever bit 5, 6 or 7 is setted) the function
    * will always return the best alignment beginning position and cigar. When
@@ -100,11 +100,9 @@ public class Aligner {
    the second largest score from the unmasked elements.
    * @return Smith-Waterman alignment
    */
-  public static native Alignment align(byte[] read, byte[] flattenedMatrix,
-                                       int n, int score_size, byte[] ref,
-                                       int gapOpen, int gapExtend, int flag,
-                                       short filterscore, int filterdistance,
-                                       int maskLen);
+  public static native Alignment align(byte[] read, byte[] flattenedMatrix, int n, int score_size,
+      byte[] ref, int gapOpen, int gapExtend, int flag, short filterscore, int filterdistance,
+      int maskLen);
   /**
    * Performs striped Smith-Waterman alignment
    *
@@ -117,12 +115,10 @@ public class Aligner {
    *     same value.
    * @return Smith-Waterman alignment
    */
-  public static Alignment align(byte[] read, byte[] ref, int[][] matrix,
-                                int gapOpen, int gapExtend,
-                                boolean ignoreCase) {
+  public static Alignment align(
+      byte[] read, byte[] ref, int[][] matrix, int gapOpen, int gapExtend, boolean ignoreCase) {
     if (gapOpen < 0 || gapExtend < 0)
-      throw new IllegalArgumentException(
-          "Gap open and extension penalties must be positive");
+      throw new IllegalArgumentException("Gap open and extension penalties must be positive");
     if (gapOpen >= 256 || gapExtend >= 256)
       throw new IllegalArgumentException(
           "Gap open and extension penalties must fit into unsigned 8-bit integer");
@@ -139,10 +135,9 @@ public class Aligner {
     assert (flattenedMatrix.length == uniqueBases * uniqueBases);
     assert (maxValue(readNum) < uniqueBases);
     assert (maxValue(refNum) < uniqueBases);
-    Alignment alignment = align(readNum, flattenedMatrix, uniqueBases,
-                                MAX_SCORE_UNSURE, refNum, gapOpen, gapExtend,
-                                FLAG_INCLUDE_BEST_ALIGNMENT_POSITION_AND_CIGAR,
-                                (short)0, 0, Math.max(15, readNum.length / 2));
+    Alignment alignment = align(readNum, flattenedMatrix, uniqueBases, MAX_SCORE_UNSURE, refNum,
+        gapOpen, gapExtend, FLAG_INCLUDE_BEST_ALIGNMENT_POSITION_AND_CIGAR, (short) 0, 0,
+        Math.max(15, readNum.length / 2));
     return alignment;
   }
   private static int maxValue(byte[] array) {
@@ -161,8 +156,7 @@ public class Aligner {
    * @param ignoreCase treat upper and lowercase ASCII values as the same
    * @return numeric sequence
    */
-  private static byte[] convertToNumeric(int[] lookup, byte[] sequence,
-                                         boolean ignoreCase) {
+  private static byte[] convertToNumeric(int[] lookup, byte[] sequence, boolean ignoreCase) {
     byte[] numericSeq = new byte[sequence.length];
     for (int i = 0; i < sequence.length; i++) {
       int b = sequence[i];
@@ -172,7 +166,7 @@ public class Aligner {
       if (lookup[b] == -1) {
         lookup[b] = lookup[256]++;
       }
-      numericSeq[i] = (byte)lookup[b];
+      numericSeq[i] = (byte) lookup[b];
     }
     return numericSeq;
   }
@@ -198,7 +192,7 @@ public class Aligner {
           throw new IllegalArgumentException(
               "Scoring matrix values must fit into signed 8-bit integer");
         }
-        flattened[newi * size + newj] = (byte)score;
+        flattened[newi * size + newj] = (byte) score;
       }
     }
     return flattened;

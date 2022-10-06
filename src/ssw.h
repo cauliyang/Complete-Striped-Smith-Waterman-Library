@@ -15,19 +15,19 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef __ARM_NEON // (M1)
-#include "sse2neon.h"
-#else // x86 (Intel)
-#include <emmintrin.h>
+#ifdef __ARM_NEON  // (M1)
+#  include "sse2neon.h"
+#else  // x86 (Intel)
+#  include <emmintrin.h>
 #endif
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif  // __cplusplus
 
 #define MAPSTR "MIDNSHP=X"
 #ifndef BAM_CIGAR_SHIFT
-#define BAM_CIGAR_SHIFT 4u
+#  define BAM_CIGAR_SHIFT 4u
 #endif
 
 extern const uint8_t encoded_ops[];
@@ -96,8 +96,7 @@ typedef struct {
                         mat is the pointer to the array {2, -2, -2, -2, -2, 2,
    -2, -2, -2, -2, 2, -2, -2, -2, -2, 2}
 */
-s_profile *ssw_init(const int8_t *read, const int32_t readLen,
-                    const int8_t *mat, const int32_t n,
+s_profile *ssw_init(const int8_t *read, const int32_t readLen, const int8_t *mat, const int32_t n,
                     const int8_t score_size);
 
 /*!	@function	Release the memory allocated by function ssw_init.
@@ -153,9 +152,8 @@ void init_destroy(s_profile *p);
    coordinate.
 */
 s_align *ssw_align(const s_profile *prof, const int8_t *ref, int32_t refLen,
-                   const uint8_t weight_gapO, const uint8_t weight_gapE,
-                   const uint8_t flag, const uint16_t filters,
-                   const int32_t filterd, const int32_t maskLen);
+                   const uint8_t weight_gapO, const uint8_t weight_gapE, const uint8_t flag,
+                   const uint16_t filters, const int32_t filterd, const int32_t maskLen);
 
 /*!	@function	Release the memory allocated by function ssw_align.
         @param	a	pointer to the alignment result structure
@@ -182,9 +180,8 @@ void align_destroy(s_align *a);
      The number of mismatches.
          The cigar and cigarLen are modified.
 */
-int32_t mark_mismatch(int32_t ref_begin1, int32_t read_begin1,
-                      int32_t read_end1, const int8_t *ref, const int8_t *read,
-                      int32_t readLen, uint32_t **cigar, int32_t *cigarLen);
+int32_t mark_mismatch(int32_t ref_begin1, int32_t read_begin1, int32_t read_end1, const int8_t *ref,
+                      const int8_t *read, int32_t readLen, uint32_t **cigar, int32_t *cigarLen);
 
 /*!	@function		Produce CIGAR 32-bit unsigned integer from CIGAR
    operation and CIGAR length
@@ -214,12 +211,10 @@ static inline char cigar_int_to_op(uint32_t cigar_int) {
    CIGAR operation and length
         @return			length of CIGAR operation
 */
-static inline uint32_t cigar_int_to_len(uint32_t cigar_int) {
-  return cigar_int >> BAM_CIGAR_SHIFT;
-}
+static inline uint32_t cigar_int_to_len(uint32_t cigar_int) { return cigar_int >> BAM_CIGAR_SHIFT; }
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif  // __cplusplus
 
-#endif // SSW_H
+#endif  // SSW_H

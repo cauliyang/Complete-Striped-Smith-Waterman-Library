@@ -15,4 +15,3 @@ NamespaceIndentation: All
 BreakBeforeBinaryOperators: All
 BreakBeforeTernaryOperators: true
 ...
-

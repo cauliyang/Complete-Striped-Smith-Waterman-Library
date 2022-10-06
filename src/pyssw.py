@@ -188,14 +188,14 @@ def buildPath(q, r, nQryBeg, nRefBeg, lCigar):
 
 def main(args):
     lEle = []
-    dRc = {} 
+    dRc = {}
     dEle2Int = {}
     dInt2Ele = {}
     if False == args.bProtein:
 # init DNA score matrix
         if not args.sMatrix:
             lEle = ['A', 'C', 'G', 'T', 'N']
-            dRc = {'A':'T', 'C':'G', 'G':'C', 'T':'A', 'a':'T', 'c':'G', 'g':'C', 't':'A'} 
+            dRc = {'A':'T', 'C':'G', 'G':'C', 'T':'A', 'a':'T', 'c':'G', 'g':'C', 't':'A'}
             for i,ele in enumerate(lEle):
                 dEle2Int[ele] = i
                 dEle2Int[ele.lower()] = i
@@ -256,7 +256,7 @@ def main(args):
             qRcProfile = ssw.ssw_init(qRcNum, ct.c_int32(len(sQSeq)), mat, len(lEle), 2)
 # set mask len
         nMaskLen = len(sQSeq) // 2
-        
+
 # iter target sequence
         for sRId,sRSeq,_ in read(args.target):
             rNum = to_int(sRSeq, lEle, dEle2Int)
@@ -285,7 +285,7 @@ def main(args):
                     print('suboptimal_alignment_score: {}\t'.format(resPrint[1])),
                 if strand == 0:
                     print('strand: +\t'),
-                else: 
+                else:
                     print('strand: -\t'),
                 if resPrint[2] + 1:
                     print('target_begin: {}\t'.format(resPrint[2] + 1)),
@@ -373,4 +373,3 @@ if __name__ == '__main__':
     main(args)
     t2 = ti.default_timer()
     sys.stderr.write('CPU time: {} seconds\n'.format(t2 - t1))
-

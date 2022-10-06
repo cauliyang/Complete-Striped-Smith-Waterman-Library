@@ -397,4 +397,3 @@ optimal_alignment_score: 82	suboptimal_alignment_score: 80	strand: +	target_end:
 target_name: chr3
 query_name: 9:16274705:F:129;9,16274709,C,A:9,16274719,C,G:9,16274741,A,T;9,16274862,A,G/1
 optimal_alignment_score: 72	suboptimal_alignment_score: 64	strand: +	target_end: 524699	query_end: 54
-

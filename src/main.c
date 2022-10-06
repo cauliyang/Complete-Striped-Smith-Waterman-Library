@@ -4,8 +4,6 @@
  *  Last revision by Mengyao Zhao on 2022-May-21.
  */
 
-#include "kseq.h"
-#include "ssw.h"
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -15,18 +13,21 @@
 #include <unistd.h>
 #include <zlib.h>
 
-#ifdef __ARM_NEON // (M1)
-#include "sse2neon.h"
-#else // x86 (Intel)
-#include <emmintrin.h>
+#include "kseq.h"
+#include "ssw.h"
+
+#ifdef __ARM_NEON  // (M1)
+#  include "sse2neon.h"
+#else  // x86 (Intel)
+#  include <emmintrin.h>
 #endif
 
 #ifdef __GNUC__
-#define LIKELY(x) __builtin_expect((x), 1)
-#define UNLIKELY(x) __builtin_expect((x), 0)
+#  define LIKELY(x) __builtin_expect((x), 1)
+#  define UNLIKELY(x) __builtin_expect((x), 0)
 #else
-#define LIKELY(x) (x)
-#define UNLIKELY(x) (x)
+#  define LIKELY(x) (x)
+#  define UNLIKELY(x) (x)
 #endif
 
 /*! @function
@@ -34,22 +35,20 @@
   @param  x  integer to be rounded (in place)
   @discussion x will be modified.
  */
-#define kroundup32(x)                                                          \
-  (--(x), (x) |= (x) >> 1, (x) |= (x) >> 2, (x) |= (x) >> 4, (x) |= (x) >> 8,  \
-   (x) |= (x) >> 16, ++(x))
+#define kroundup32(x)                                                                           \
+  (--(x), (x) |= (x) >> 1, (x) |= (x) >> 2, (x) |= (x) >> 4, (x) |= (x) >> 8, (x) |= (x) >> 16, \
+   ++(x))
 
 KSEQ_INIT(gzFile, gzread)
 
 static void reverse_comple(const char *seq, char *rc) {
   int32_t end = strlen(seq), start = 0;
-  static const int8_t rc_table[128] = {
-      4, 4, 4,  4,  4,  4, 4, 4, 4,  4,  4,  4, 4, 4, 4,  4,  4, 4, 4,
-      4, 4, 4,  4,  4,  4, 4, 4, 4,  4,  4,  4, 4, 4, 4,  4,  4, 4, 4,
-      4, 4, 4,  4,  4,  4, 4, 4, 4,  4,  4,  4, 4, 4, 4,  4,  4, 4, 4,
-      4, 4, 4,  4,  4,  4, 4, 4, 84, 4,  71, 4, 4, 4, 67, 4,  4, 4, 4,
-      4, 4, 78, 4,  4,  4, 4, 4, 65, 65, 4,  4, 4, 4, 4,  4,  4, 4, 4,
-      4, 4, 84, 4,  71, 4, 4, 4, 67, 4,  4,  4, 4, 4, 4,  78, 4, 4, 4,
-      4, 4, 65, 65, 4,  4, 4, 4, 4,  4,  4,  4, 4, 4};
+  static const int8_t rc_table[128]
+      = {4,  4, 4, 4, 4, 4, 4,  4,  4, 4, 4, 4, 4,  4,  4, 4,  4, 4, 4, 4,  4, 4,  4, 4, 4, 4,
+         4,  4, 4, 4, 4, 4, 4,  4,  4, 4, 4, 4, 4,  4,  4, 4,  4, 4, 4, 4,  4, 4,  4, 4, 4, 4,
+         4,  4, 4, 4, 4, 4, 4,  4,  4, 4, 4, 4, 4,  84, 4, 71, 4, 4, 4, 67, 4, 4,  4, 4, 4, 4,
+         78, 4, 4, 4, 4, 4, 65, 65, 4, 4, 4, 4, 4,  4,  4, 4,  4, 4, 4, 84, 4, 71, 4, 4, 4, 67,
+         4,  4, 4, 4, 4, 4, 78, 4,  4, 4, 4, 4, 65, 65, 4, 4,  4, 4, 4, 4,  4, 4,  4, 4};
   rc[end] = '\0';
   --end;
   while (LIKELY(start < end)) {
@@ -58,34 +57,28 @@ static void reverse_comple(const char *seq, char *rc) {
     ++start;
     --end;
   }
-  if (start == end)
-    rc[start] = (char)rc_table[(int8_t)seq[start]];
+  if (start == end) rc[start] = (char)rc_table[(int8_t)seq[start]];
 }
 
-static void
-ssw_write(s_align *a, const kseq_t *ref_seq, const kseq_t *read,
-          const char *read_seq, // strand == 0: original read; strand == 1:
-                                // reverse complement read
-          const int8_t *ref_num, const int8_t *read_num, const int8_t *table,
-          int8_t strand, // 0: forward aligned ; 1: reverse complement aligned
-          int8_t sam) {  // 0: Blast like output; 1: Sam format output
+static void ssw_write(s_align *a, const kseq_t *ref_seq, const kseq_t *read,
+                      const char *read_seq,  // strand == 0: original read; strand == 1:
+                                             // reverse complement read
+                      const int8_t *ref_num, const int8_t *read_num, const int8_t *table,
+                      int8_t strand,  // 0: forward aligned ; 1: reverse complement aligned
+                      int8_t sam) {   // 0: Blast like output; 1: Sam format output
 
   int32_t mismatch;
-  if (sam == 0) { // Blast like output
-    fprintf(stdout,
-            "target_name: %s\nquery_name: %s\noptimal_alignment_score: %d\t",
+  if (sam == 0) {  // Blast like output
+    fprintf(stdout, "target_name: %s\nquery_name: %s\noptimal_alignment_score: %d\t",
             ref_seq->name.s, read->name.s, a->score1);
-    if (a->score2 > 0)
-      fprintf(stdout, "suboptimal_alignment_score: %d\t", a->score2);
+    if (a->score2 > 0) fprintf(stdout, "suboptimal_alignment_score: %d\t", a->score2);
     if (strand == 0)
       fprintf(stdout, "strand: +\t");
     else
       fprintf(stdout, "strand: -\t");
-    if (a->ref_begin1 + 1)
-      fprintf(stdout, "target_begin: %d\t", a->ref_begin1 + 1);
+    if (a->ref_begin1 + 1) fprintf(stdout, "target_begin: %d\t", a->ref_begin1 + 1);
     fprintf(stdout, "target_end: %d\t", a->ref_end1 + 1);
-    if (a->read_begin1 + 1)
-      fprintf(stdout, "query_begin: %d\t", a->read_begin1 + 1);
+    if (a->read_begin1 + 1) fprintf(stdout, "query_begin: %d\t", a->read_begin1 + 1);
     fprintf(stdout, "query_end: %d\n\n", a->read_end1 + 1);
     if (a->cigar) {
       int32_t c = 0, left = 0, e = 0, qb = a->ref_begin1, pb = a->read_begin1;
@@ -107,8 +100,7 @@ ssw_write(s_align *a, const kseq_t *ref_seq, const kseq_t *read,
               ++q;
             }
             ++count;
-            if (count == 60)
-              goto step2;
+            if (count == 60) goto step2;
           }
         }
       step2:
@@ -121,8 +113,7 @@ ssw_write(s_align *a, const kseq_t *ref_seq, const kseq_t *read,
           uint32_t l = (count == 0 && left > 0) ? left : length;
           for (i = 0; i < l; ++i) {
             if (letter == 'M') {
-              if (table[(int)*(ref_seq->seq.s + q)] ==
-                  table[(int)*(read_seq + p)])
+              if (table[(int)*(ref_seq->seq.s + q)] == table[(int)*(read_seq + p)])
                 fprintf(stdout, "|");
               else
                 fprintf(stdout, "*");
@@ -172,14 +163,13 @@ ssw_write(s_align *a, const kseq_t *ref_seq, const kseq_t *read,
         fprintf(stdout, "    %d\n\n", p);
       }
     }
-  } else { // Sam format output
+  } else {  // Sam format output
     fprintf(stdout, "%s\t", read->name.s);
     if (a->score1 == 0)
       fprintf(stdout, "4\t*\t0\t255\t*\t*\t0\t0\t*\t*\n");
     else {
       int32_t c, p;
-      uint32_t mapq = -4.343 * log(1 - (double)abs(a->score1 - a->score2) /
-                                           (double)a->score1);
+      uint32_t mapq = -4.343 * log(1 - (double)abs(a->score1 - a->score2) / (double)a->score1);
       mapq = (uint32_t)(mapq + 4.99);
       mapq = mapq < 254 ? mapq : 254;
       if (strand)
@@ -187,9 +177,8 @@ ssw_write(s_align *a, const kseq_t *ref_seq, const kseq_t *read,
       else
         fprintf(stdout, "0\t");
       fprintf(stdout, "%s\t%d\t%d\t", ref_seq->name.s, a->ref_begin1 + 1, mapq);
-      mismatch =
-          mark_mismatch(a->ref_begin1, a->read_begin1, a->read_end1, ref_num,
-                        read_num, read->seq.l, &a->cigar, &a->cigarLen);
+      mismatch = mark_mismatch(a->ref_begin1, a->read_begin1, a->read_end1, ref_num, read_num,
+                               read->seq.l, &a->cigar, &a->cigarLen);
       for (c = 0; c < a->cigarLen; ++c) {
         char letter = cigar_int_to_op(a->cigar[c]);
         uint32_t length = cigar_int_to_len(a->cigar[c]);
@@ -199,8 +188,7 @@ ssw_write(s_align *a, const kseq_t *ref_seq, const kseq_t *read,
       fprintf(stdout, "%s", read_seq);
       fprintf(stdout, "\t");
       if (read->qual.s && strand) {
-        for (p = read->qual.l - 1; p >= 0; --p)
-          fprintf(stdout, "%c", read->qual.s[p]);
+        for (p = read->qual.l - 1; p >= 0; --p) fprintf(stdout, "%c", read->qual.s[p]);
       } else if (read->qual.s)
         fprintf(stdout, "%s", read->qual.s);
       else
@@ -220,9 +208,8 @@ int main(int argc, char *const argv[]) {
   float cpu_time;
   gzFile read_fp, ref_fp;
   kseq_t *read_seq, *ref_seq;
-  int32_t l, m, k, match = 2, mismatch = 2, gap_open = 3, gap_extension = 1,
-                   path = 0, reverse = 0, n = 5, sam = 0, protein = 0,
-                   header = 0, s1 = 67108864, s2 = 128, filter = 0;
+  int32_t l, m, k, match = 2, mismatch = 2, gap_open = 3, gap_extension = 1, path = 0, reverse = 0,
+                   n = 5, sam = 0, protein = 0, header = 0, s1 = 67108864, s2 = 128, filter = 0;
   int8_t *mata, *ref_num, *num, *num_rc = 0;
   const int8_t *mat;
   char *read_rc = 0, *mat_name = 0;
@@ -231,98 +218,102 @@ int main(int argc, char *const argv[]) {
       //  A   R   N   D   C   Q   E   G   H   I   L   K   M   F   P   S   T   W
       //  Y   V   B   Z   X   *
       5,  -2, -1, -2, -1, -1, -1, 0,  -2, -1, -2, -1,
-      -1, -3, -1, 1,  0,  -3, -2, 0,  -2, -1, -1, -5, // A
+      -1, -3, -1, 1,  0,  -3, -2, 0,  -2, -1, -1, -5,  // A
       -2, 7,  -1, -2, -4, 1,  0,  -3, 0,  -4, -3, 3,
-      -2, -3, -3, -1, -1, -3, -1, -3, -1, 0,  -1, -5, // R
+      -2, -3, -3, -1, -1, -3, -1, -3, -1, 0,  -1, -5,  // R
       -1, -1, 7,  2,  -2, 0,  0,  0,  1,  -3, -4, 0,
-      -2, -4, -2, 1,  0,  -4, -2, -3, 5,  0,  -1, -5, // N
+      -2, -4, -2, 1,  0,  -4, -2, -3, 5,  0,  -1, -5,  // N
       -2, -2, 2,  8,  -4, 0,  2,  -1, -1, -4, -4, -1,
-      -4, -5, -1, 0,  -1, -5, -3, -4, 6,  1,  -1, -5, // D
+      -4, -5, -1, 0,  -1, -5, -3, -4, 6,  1,  -1, -5,  // D
       -1, -4, -2, -4, 13, -3, -3, -3, -3, -2, -2, -3,
-      -2, -2, -4, -1, -1, -5, -3, -1, -3, -3, -1, -5, // C
+      -2, -2, -4, -1, -1, -5, -3, -1, -3, -3, -1, -5,  // C
       -1, 1,  0,  0,  -3, 7,  2,  -2, 1,  -3, -2, 2,
-      0,  -4, -1, 0,  -1, -1, -1, -3, 0,  4,  -1, -5, // Q
+      0,  -4, -1, 0,  -1, -1, -1, -3, 0,  4,  -1, -5,  // Q
       -1, 0,  0,  2,  -3, 2,  6,  -3, 0,  -4, -3, 1,
-      -2, -3, -1, -1, -1, -3, -2, -3, 1,  5,  -1, -5, // E
+      -2, -3, -1, -1, -1, -3, -2, -3, 1,  5,  -1, -5,  // E
       0,  -3, 0,  -1, -3, -2, -3, 8,  -2, -4, -4, -2,
-      -3, -4, -2, 0,  -2, -3, -3, -4, -1, -2, -1, -5, // G
+      -3, -4, -2, 0,  -2, -3, -3, -4, -1, -2, -1, -5,  // G
       -2, 0,  1,  -1, -3, 1,  0,  -2, 10, -4, -3, 0,
-      -1, -1, -2, -1, -2, -3, 2,  -4, 0,  0,  -1, -5, // H
+      -1, -1, -2, -1, -2, -3, 2,  -4, 0,  0,  -1, -5,  // H
       -1, -4, -3, -4, -2, -3, -4, -4, -4, 5,  2,  -3,
-      2,  0,  -3, -3, -1, -3, -1, 4,  -4, -3, -1, -5, // I
+      2,  0,  -3, -3, -1, -3, -1, 4,  -4, -3, -1, -5,  // I
       -2, -3, -4, -4, -2, -2, -3, -4, -3, 2,  5,  -3,
-      3,  1,  -4, -3, -1, -2, -1, 1,  -4, -3, -1, -5, // L
+      3,  1,  -4, -3, -1, -2, -1, 1,  -4, -3, -1, -5,  // L
       -1, 3,  0,  -1, -3, 2,  1,  -2, 0,  -3, -3, 6,
-      -2, -4, -1, 0,  -1, -3, -2, -3, 0,  1,  -1, -5, // K
+      -2, -4, -1, 0,  -1, -3, -2, -3, 0,  1,  -1, -5,  // K
       -1, -2, -2, -4, -2, 0,  -2, -3, -1, 2,  3,  -2,
-      7,  0,  -3, -2, -1, -1, 0,  1,  -3, -1, -1, -5, // M
+      7,  0,  -3, -2, -1, -1, 0,  1,  -3, -1, -1, -5,  // M
       -3, -3, -4, -5, -2, -4, -3, -4, -1, 0,  1,  -4,
-      0,  8,  -4, -3, -2, 1,  4,  -1, -4, -4, -1, -5, // F
+      0,  8,  -4, -3, -2, 1,  4,  -1, -4, -4, -1, -5,  // F
       -1, -3, -2, -1, -4, -1, -1, -2, -2, -3, -4, -1,
-      -3, -4, 10, -1, -1, -4, -3, -3, -2, -1, -1, -5, // P
+      -3, -4, 10, -1, -1, -4, -3, -3, -2, -1, -1, -5,  // P
       1,  -1, 1,  0,  -1, 0,  -1, 0,  -1, -3, -3, 0,
-      -2, -3, -1, 5,  2,  -4, -2, -2, 0,  0,  -1, -5, // S
+      -2, -3, -1, 5,  2,  -4, -2, -2, 0,  0,  -1, -5,  // S
       0,  -1, 0,  -1, -1, -1, -1, -2, -2, -1, -1, -1,
-      -1, -2, -1, 2,  5,  -3, -2, 0,  0,  -1, -1, -5, // T
+      -1, -2, -1, 2,  5,  -3, -2, 0,  0,  -1, -1, -5,  // T
       -3, -3, -4, -5, -5, -1, -3, -3, -3, -3, -2, -3,
-      -1, 1,  -4, -4, -3, 15, 2,  -3, -5, -2, -1, -5, // W
+      -1, 1,  -4, -4, -3, 15, 2,  -3, -5, -2, -1, -5,  // W
       -2, -1, -2, -3, -3, -1, -2, -3, 2,  -1, -1, -2,
-      0,  4,  -3, -2, -2, 2,  8,  -1, -3, -2, -1, -5, // Y
+      0,  4,  -3, -2, -2, 2,  8,  -1, -3, -2, -1, -5,  // Y
       0,  -3, -3, -4, -1, -3, -3, -4, -4, 4,  1,  -3,
-      1,  -1, -3, -2, 0,  -3, -1, 5,  -3, -3, -1, -5, // V
+      1,  -1, -3, -2, 0,  -3, -1, 5,  -3, -3, -1, -5,  // V
       -2, -1, 5,  6,  -3, 0,  1,  -1, 0,  -4, -4, 0,
-      -3, -4, -2, 0,  0,  -5, -3, -3, 6,  1,  -1, -5, // B
+      -3, -4, -2, 0,  0,  -5, -3, -3, 6,  1,  -1, -5,  // B
       -1, 0,  0,  1,  -3, 4,  5,  -2, 0,  -3, -3, 1,
-      -1, -4, -1, 0,  -1, -2, -2, -3, 1,  5,  -1, -5, // Z
+      -1, -4, -1, 0,  -1, -2, -2, -3, 1,  5,  -1, -5,  // Z
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -5, // X
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -5,  // X
       -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5,
-      -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, 1 // *
+      -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, 1  // *
   };
 
   /* This table is used to transform amino acid letters into numbers. */
-  int8_t aa_table[128] = {
-      23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
-      23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
-      23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
-      23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
-      23, 0,  20, 4,  3,  6,  13, 7,  8,  9,  23, 11, 10, 12, 2,  23,
-      14, 5,  1,  15, 16, 23, 19, 17, 22, 18, 21, 23, 23, 23, 23, 23,
-      23, 0,  20, 4,  3,  6,  13, 7,  8,  9,  23, 11, 10, 12, 2,  23,
-      14, 5,  1,  15, 16, 23, 19, 17, 22, 18, 21, 23, 23, 23, 23, 23};
+  int8_t aa_table[128]
+      = {23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
+         23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,
+         23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 0,
+         20, 4,  3,  6,  13, 7,  8,  9,  23, 11, 10, 12, 2,  23, 14, 5,  1,  15, 16, 23, 19, 17,
+         22, 18, 21, 23, 23, 23, 23, 23, 23, 0,  20, 4,  3,  6,  13, 7,  8,  9,  23, 11, 10, 12,
+         2,  23, 14, 5,  1,  15, 16, 23, 19, 17, 22, 18, 21, 23, 23, 23, 23, 23};
 
   /* This table is used to transform nucleotide letters into numbers. */
-  int8_t nt_table[128] = {
-      4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-      4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-      4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0,
-      4, 1, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4,
-      4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 4, 1, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4,
-      4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
+  int8_t nt_table[128]
+      = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+         4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+         4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 4, 1, 4, 4, 4, 2, 4, 4, 4, 4, 4, 4,
+         4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 4, 1, 4, 4, 4, 2,
+         4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
 
   int8_t *table = nt_table;
 
   if (optind + 2 > argc) {
     fprintf(stderr, "\n");
-    fprintf(stderr, "Usage: ssw_test [options] ... <target.fasta> "
-                    "<query.fasta>(or <query.fastq>)\n");
+    fprintf(stderr,
+            "Usage: ssw_test [options] ... <target.fasta> "
+            "<query.fasta>(or <query.fastq>)\n");
     fprintf(stderr, "Options:\n");
-    fprintf(stderr, "\t-m N\tN is a positive integer for weight match in "
-                    "genome sequence alignment. [default: 2]\n");
+    fprintf(stderr,
+            "\t-m N\tN is a positive integer for weight match in "
+            "genome sequence alignment. [default: 2]\n");
     fprintf(stderr,
             "\t-x N\tN is a positive integer. -N will be used as weight "
             "mismatch in genome sequence alignment. [default: 2]\n");
-    fprintf(stderr, "\t-o N\tN is a positive integer. -N will be used as the "
-                    "weight for the gap opening. [default: 3]\n");
-    fprintf(stderr, "\t-e N\tN is a positive integer. -N will be used as the "
-                    "weight for the gap extension. [default: 1]\n");
-    fprintf(stderr, "\t-p\tDo protein sequence alignment. Without this option, "
-                    "the ssw_test will do genome sequence alignment.\n");
-    fprintf(stderr, "\t-a FILE\tFILE is either the Blosum or Pam weight "
-                    "matrix. [default: Blosum50]\n");
+    fprintf(stderr,
+            "\t-o N\tN is a positive integer. -N will be used as the "
+            "weight for the gap opening. [default: 3]\n");
+    fprintf(stderr,
+            "\t-e N\tN is a positive integer. -N will be used as the "
+            "weight for the gap extension. [default: 1]\n");
+    fprintf(stderr,
+            "\t-p\tDo protein sequence alignment. Without this option, "
+            "the ssw_test will do genome sequence alignment.\n");
+    fprintf(stderr,
+            "\t-a FILE\tFILE is either the Blosum or Pam weight "
+            "matrix. [default: Blosum50]\n");
     fprintf(stderr, "\t-c\tReturn the alignment path.\n");
-    fprintf(stderr, "\t-f N\tN is a positive integer. Only output the "
-                    "alignments with the Smith-Waterman score >= N.\n");
+    fprintf(stderr,
+            "\t-f N\tN is a positive integer. Only output the "
+            "alignments with the Smith-Waterman score >= N.\n");
     fprintf(stderr,
             "\t-r\tThe best alignment will be picked between the original read "
             "alignment and the reverse complement read alignment.\n");
@@ -334,42 +325,42 @@ int main(int argc, char *const argv[]) {
   // Parse command line.
   while ((l = getopt(argc, argv, "m:x:o:e:a:f:pcrsh")) >= 0) {
     switch (l) {
-    case 'm':
-      match = atoi(optarg);
-      break;
-    case 'x':
-      mismatch = atoi(optarg);
-      break;
-    case 'o':
-      gap_open = atoi(optarg);
-      break;
-    case 'e':
-      gap_extension = atoi(optarg);
-      break;
+      case 'm':
+        match = atoi(optarg);
+        break;
+      case 'x':
+        mismatch = atoi(optarg);
+        break;
+      case 'o':
+        gap_open = atoi(optarg);
+        break;
+      case 'e':
+        gap_extension = atoi(optarg);
+        break;
 
-    case 'a':
-      mat_name = (char *)malloc(strlen(optarg) + 1);
-      strcpy(mat_name, optarg);
-      break;
+      case 'a':
+        mat_name = (char *)malloc(strlen(optarg) + 1);
+        strcpy(mat_name, optarg);
+        break;
 
-    case 'f':
-      filter = atoi(optarg);
-      break;
-    case 'p':
-      protein = 1;
-      break;
-    case 'c':
-      path = 1;
-      break;
-    case 'r':
-      reverse = 1;
-      break;
-    case 's':
-      sam = 1;
-      break;
-    case 'h':
-      header = 1;
-      break;
+      case 'f':
+        filter = atoi(optarg);
+        break;
+      case 'p':
+        protein = 1;
+        break;
+      case 'c':
+        path = 1;
+        break;
+      case 'r':
+        reverse = 1;
+        break;
+      case 's':
+        sam = 1;
+        break;
+      case 'h':
+        header = 1;
+        break;
     }
   }
 
@@ -377,12 +368,10 @@ int main(int argc, char *const argv[]) {
   mata = (int8_t *)calloc(25, sizeof(int8_t));
   for (l = k = 0; LIKELY(l < 4); ++l) {
     for (m = 0; LIKELY(m < 4); ++m)
-      mata[k++] =
-          l == m ? match : -mismatch; /* weight_match : -weight_mismatch */
-    mata[k++] = 0;                    // ambiguous base
+      mata[k++] = l == m ? match : -mismatch; /* weight_match : -weight_mismatch */
+    mata[k++] = 0;                            // ambiguous base
   }
-  for (m = 0; LIKELY(m < 5); ++m)
-    mata[k++] = 0;
+  for (m = 0; LIKELY(m < 5); ++m) mata[k++] = 0;
   mat = mata;
 
   if (protein == 1 && mat_name == 0) {
@@ -390,7 +379,6 @@ int main(int argc, char *const argv[]) {
     table = aa_table;
     mat = mat50;
   } else if (mat_name != 0) {
-
     // Parse score matrix.
     FILE *f_mat = fopen(mat_name, "r");
     free(mat_name);
@@ -455,13 +443,11 @@ int main(int argc, char *const argv[]) {
     ref_fp = gzopen(argv[optind], "r");
     ref_seq = kseq_init(ref_fp);
     while ((l = kseq_read(ref_seq)) >= 0)
-      fprintf(stdout, "@SQ\tSN:%s\tLN:%d\n", ref_seq->name.s,
-              (int32_t)ref_seq->seq.l);
+      fprintf(stdout, "@SQ\tSN:%s\tLN:%d\n", ref_seq->name.s, (int32_t)ref_seq->seq.l);
     kseq_destroy(ref_seq);
     gzclose(ref_fp);
   } else if (sam && !path) {
-    fprintf(stderr,
-            "SAM format output is only available together with option -c.\n");
+    fprintf(stderr, "SAM format output is only available together with option -c.\n");
     sam = 0;
   }
 
@@ -487,17 +473,16 @@ int main(int argc, char *const argv[]) {
         num_rc = (int8_t *)realloc(num_rc, s2);
       }
     }
-    for (m = 0; m < readLen; ++m)
-      num[m] = table[(int)read_seq->seq.s[m]];
+    for (m = 0; m < readLen; ++m) num[m] = table[(int)read_seq->seq.s[m]];
     p = ssw_init(num, readLen, mat, n, 2);
     if (reverse == 1 && n == 5) {
       reverse_comple(read_seq->seq.s, read_rc);
-      for (m = 0; m < readLen; ++m)
-        num_rc[m] = table[(int)read_rc[m]];
+      for (m = 0; m < readLen; ++m) num_rc[m] = table[(int)read_rc[m]];
       p_rc = ssw_init(num_rc, readLen, mat, n, 2);
     } else if (reverse == 1 && n == 24) {
-      fprintf(stderr, "Reverse complement alignment is not available for "
-                      "protein sequences. \n");
+      fprintf(stderr,
+              "Reverse complement alignment is not available for "
+              "protein sequences. \n");
       free(num);
       free(ref_num);
       if (num_rc) {
@@ -518,29 +503,22 @@ int main(int argc, char *const argv[]) {
         kroundup32(s1);
         ref_num = (int8_t *)realloc(ref_num, s1);
       }
-      for (m = 0; m < refLen; ++m)
-        ref_num[m] = table[(int)ref_seq->seq.s[m]];
-      if (path == 1)
-        flag = 2;
-      result = ssw_align(p, ref_num, refLen, gap_open, gap_extension, flag,
-                         filter, 0, maskLen);
+      for (m = 0; m < refLen; ++m) ref_num[m] = table[(int)ref_seq->seq.s[m]];
+      if (path == 1) flag = 2;
+      result = ssw_align(p, ref_num, refLen, gap_open, gap_extension, flag, filter, 0, maskLen);
       if (reverse == 1 && protein == 0)
-        result_rc = ssw_align(p_rc, ref_num, refLen, gap_open, gap_extension,
-                              flag, filter, 0, maskLen);
-      if (result_rc && result_rc->score1 > result->score1 &&
-          result_rc->score1 >= filter) {
+        result_rc
+            = ssw_align(p_rc, ref_num, refLen, gap_open, gap_extension, flag, filter, 0, maskLen);
+      if (result_rc && result_rc->score1 > result->score1 && result_rc->score1 >= filter) {
         if (result_rc->flag == 2)
-          fprintf(
-              stderr,
-              "Warning: The reverse compliment alignment of the following "
-              "sequences may miss a small part.\nref_seq: %s\nread_seq: %s\n\n",
-              ref_seq->name.s, read_seq->name.s);
+          fprintf(stderr,
+                  "Warning: The reverse compliment alignment of the following "
+                  "sequences may miss a small part.\nref_seq: %s\nread_seq: %s\n\n",
+                  ref_seq->name.s, read_seq->name.s);
         if (sam)
-          ssw_write(result_rc, ref_seq, read_seq, read_rc, ref_num, num_rc,
-                    table, 1, 1);
+          ssw_write(result_rc, ref_seq, read_seq, read_rc, ref_num, num_rc, table, 1, 1);
         else
-          ssw_write(result_rc, ref_seq, read_seq, read_rc, ref_num, num_rc,
-                    table, 1, 0);
+          ssw_write(result_rc, ref_seq, read_seq, read_rc, ref_num, num_rc, table, 1, 0);
       } else if (result && result->score1 >= filter) {
         if (result->flag == 2)
           fprintf(stderr,
@@ -548,11 +526,9 @@ int main(int argc, char *const argv[]) {
                   "a small part.\nref_seq: %s\nread_seq: %s\n\n",
                   ref_seq->name.s, read_seq->name.s);
         if (sam)
-          ssw_write(result, ref_seq, read_seq, read_seq->seq.s, ref_num, num,
-                    table, 0, 1);
+          ssw_write(result, ref_seq, read_seq, read_seq->seq.s, ref_num, num, table, 0, 1);
         else
-          ssw_write(result, ref_seq, read_seq, read_seq->seq.s, ref_num, num,
-                    table, 0, 0);
+          ssw_write(result, ref_seq, read_seq, read_seq->seq.s, ref_num, num, table, 0, 0);
       } else if (!result) {
         fprintf(stderr,
                 "Warning: Alignment between the following sequences is "
@@ -560,13 +536,11 @@ int main(int argc, char *const argv[]) {
                 ref_seq->name.s, read_seq->name.s);
         continue;
       }
-      if (result_rc)
-        align_destroy(result_rc);
+      if (result_rc) align_destroy(result_rc);
       align_destroy(result);
     }
 
-    if (p_rc)
-      init_destroy(p_rc);
+    if (p_rc) init_destroy(p_rc);
     init_destroy(p);
     kseq_destroy(ref_seq);
     gzclose(ref_fp);

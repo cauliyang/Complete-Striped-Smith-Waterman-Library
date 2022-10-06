@@ -58,15 +58,15 @@ class CAlignRes(ct.Structure):
                                     cigar = 0 when the best alignment path is not available
     @field	nCigarLen	length of the cigar string; cigarLen = 0 when the best alignment path is not available
     """
-    _fields_ = [('nScore', ct.c_uint16), 
-                ('nScore2', ct.c_uint16), 
-                ('nRefBeg', ct.c_int32), 
-                ('nRefEnd', ct.c_int32), 
-                ('nQryBeg', ct.c_int32), 
-                ('nQryEnd', ct.c_int32), 
-                ('nRefEnd2', ct.c_int32), 
-                ('sCigar', ct.POINTER(ct.c_uint32)), 
-                ('nCigarLen', ct.c_int32)] 
+    _fields_ = [('nScore', ct.c_uint16),
+                ('nScore2', ct.c_uint16),
+                ('nRefBeg', ct.c_int32),
+                ('nRefEnd', ct.c_int32),
+                ('nQryBeg', ct.c_int32),
+                ('nQryEnd', ct.c_int32),
+                ('nRefEnd2', ct.c_int32),
+                ('sCigar', ct.POINTER(ct.c_uint32)),
+                ('nCigarLen', ct.c_int32)]
 
 
 
