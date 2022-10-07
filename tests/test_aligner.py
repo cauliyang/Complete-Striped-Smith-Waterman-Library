@@ -1,20 +1,5 @@
 import mssw
 
-
-def print_alignment(alignment):
-    print("===== SSW result =====\n")
-    print(f"Best Smith-Waterman score:\t{alignment.sw_score}\n")
-    print(f"Next-best Smith-Waterman score:\t{alignment.sw_score_next_best}\n")
-    print(f"Reference start:\t{alignment.ref_begin}\n")
-    print(f"Reference end:\t{alignment.ref_end}\n")
-    print(f"Query start:\t{alignment.query_begin}\n")
-    print(f"Query end:\t{alignment.query_end}\n")
-    print(f"Next-best reference end:\t{alignment.ref_end_next_best}\n")
-    print(f"Number of mismatches:\t{alignment.mismatches}\n")
-    print(f"Cigar: {alignment.cigar_string}\n")
-    print(f"======================\n")
-
-
 def test_aligner():
     reference = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
     query = "CTGAGCCGGTAAATC"
@@ -23,4 +8,13 @@ def test_aligner():
     aligner_filter = mssw.StripedSmithWaterman.Filter()
     alignment = mssw.StripedSmithWaterman.Alignment()
     aligner.Align(query, reference, len(reference), aligner_filter, alignment, masklen)
-    print_alignment(alignment)
+
+    assert(alignment.sw_score == 21)
+    assert(alignment.sw_score_next_best == 8)
+    assert(alignment.ref_begin == 8)
+    assert(alignment.ref_end == 21)
+    assert(alignment.query_begin == 0)
+    assert(alignment.query_end == 14)
+    assert(alignment.ref_end_next_best == 4)
+    assert(alignment.mismatches == 2)
+    assert(alignment.cigar_string== "4=1X4=1I5=")
