@@ -34,3 +34,5 @@ profile/
 # c++
 *.o
 *.so
+
+/build

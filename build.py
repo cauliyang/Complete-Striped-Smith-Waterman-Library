@@ -20,16 +20,6 @@ def get_extra_options() -> typing.List[str]:
     return []
 
 
-@typing.overload
-def get_files(path: Path, suffix: typing.List[str]) -> typing.Iterator[str]:
-    ...
-
-
-@typing.overload
-def get_files(path: str, suffix: typing.List[str]) -> typing.Iterator[str]:
-    ...
-
-
 def get_files(
     path: typing.Union[Path, str], suffix: typing.List[str]
 ) -> typing.Iterator[str]:

@@ -3,7 +3,7 @@
 SOURCE := utils
 BLOCK := arm sse emm
 NAMESPACE := StripedSmithWaterman
-INCLUDE := src
+INCLUDE := src/mssw/src
 
 .PHONY: all_include clean bind help
 
