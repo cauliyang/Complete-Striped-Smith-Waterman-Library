@@ -4,11 +4,12 @@
 // Last revision by Mengyao Zhao on 2017-05-30
 // Last revision by Yangyang Li on 2022-10-05
 
+#include "ssw_cpp20.hpp"
+
 #include <array>
 #include <sstream>
 
 #include "ssw.h"
-#include "ssw_cpp20.hpp"
 
 namespace {
 

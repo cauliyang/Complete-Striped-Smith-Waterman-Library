@@ -1,7 +1,6 @@
 import mssw
 
 
-
 def print_alignment(alignment):
     print("===== SSW result =====\n")
     print(f"Best Smith-Waterman score:\t{alignment.sw_score}\n")
@@ -16,16 +15,14 @@ def print_alignment(alignment):
     print(f"======================\n")
 
 
-
-
 def main():
-    a = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
-    b =  "CTGAGCCGGTAAATC"
+    reference = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
+    query = "CTGAGCCGGTAAATC"
     masklen = 15
     aligner = mssw.StripedSmithWaterman.Aligner()
-    f = mssw.StripedSmithWaterman.Filter()
+    aligner_filter = mssw.StripedSmithWaterman.Filter()
     alignment = mssw.StripedSmithWaterman.Alignment()
-    aligner.Align(a, b, len(b), f, alignment, masklen)
+    aligner.Align(query, reference, len(reference), aligner_filter, alignment, masklen)
     print_alignment(alignment)
 
 

@@ -5,6 +5,19 @@ description = "Modern Cpp binding for complete-striped-smith-watern-library"
 authors = ["Yangyang Li <yangyang.li@northwestern.edu>"]
 license = "MIT"
 readme = "README.md"
+keywords = ["smith-watern", "alignment", "bioinformatics"]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Environment :: Console',
+    'Intended Audience :: End Users/Desktop',
+    'Intended Audience :: Developers',
+    'Intended Audience :: System Administrators',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Programming Language :: Python',
+    'Topic :: Communications :: Email',
+    'Topic :: Software Development :: Bug Tracking',
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"

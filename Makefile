@@ -16,6 +16,9 @@ all_include: ## make all include files into all_include.hpp
 clean: ## clean previous binding directory
 	rm -rf bindings && mkdir bindings
 
+pre-commit: ## pre-commit
+	pre-commit run --all-files
+
 bind:  clean  all_include ## make bindings for python
 	#https://cppbinder.readthedocs.io/en/latest/config.html
 	docker run -it --rm -v `pwd`:/bind yangliz5/binder:1.0.1 \
