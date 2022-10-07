@@ -3,6 +3,8 @@
 [![python version](https://img.shields.io/pypi/pyversions/mssw)][pypi status]
 [![Release](https://github.com/cauliyang/Complete-Striped-Smith-Waterman-Library/actions/workflows/release.yml/badge.svg)](https://github.com/cauliyang/Complete-Striped-Smith-Waterman-Library/actions/workflows/release.yml)
 
+[pypi status]: https://pypi.org/project/mssw/0.1.1/
+
 # Modern C++ Binding for SSW Library
 
 ## Changes
