@@ -10,16 +10,19 @@ INCLUDE := src/mssw/src
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+test:
+	pytest -vl -x tests
+
 all_include: ## make all include files into all_include.hpp
 	python ${SOURCE}/generate_headers.py ${INCLUDE} ${BLOCK}
 
-clean: ## clean previous binding directory
+clean-bind: ## clean previous binding directory
 	rm -rf bindings && mkdir bindings
 
 pre-commit: ## pre-commit
 	pre-commit run --all-files
 
-bind:  clean  all_include ## make bindings for python
+bind:  clean-bind  all_include ## make bindings for python
 	#https://cppbinder.readthedocs.io/en/latest/config.html
 	docker run -it --rm -v `pwd`:/bind yangliz5/binder:1.0.1 \
 	  binder --root-module _cpp \
