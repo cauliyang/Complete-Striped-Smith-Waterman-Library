@@ -26,7 +26,7 @@ import mssw
 
 reference = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
 query = "CTGAGCCGGTAAATC"
-masklen = 15
+masklen = max(15, len(query))
 aligner = mssw.StripedSmithWaterman.Aligner()
 aligner_filter = mssw.StripedSmithWaterman.Filter()
 alignment = mssw.StripedSmithWaterman.Alignment()
