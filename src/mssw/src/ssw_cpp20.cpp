@@ -8,7 +8,7 @@
 #include <sstream>
 
 #include "ssw.h"
-#include "ssw_cpp.h"
+#include "ssw_cpp20.hpp"
 
 namespace {
 
