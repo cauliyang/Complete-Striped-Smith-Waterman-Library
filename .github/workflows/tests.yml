@@ -49,7 +49,7 @@ jobs:
           poetry --version
       - name: Install package
         run: |
-          poetry install --no-root --no-interaction --no-ansi
+          poetry install --no-root --no-interaction --no-ansi --with=dev
 
       - name: Run tests
         run: |
