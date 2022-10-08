@@ -54,8 +54,5 @@ jobs:
           nox --version
 
       - name: Run Nox
-        env:
-          CC: gcc
-          CXX: g++
         run: |
-          nox --force-color --python=${{ matrix.python }}
+          CXX=g++ nox --force-color --python=${{ matrix.python }}
