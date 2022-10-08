@@ -12,11 +12,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { python: "3.10", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.9", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.8", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.10", os: "windows-latest", session: "tests" }
-          - { python: "3.10", os: "macos-latest", session: "tests" }
+          - { python: "3.10", os: "ubuntu-latest", session: "tests", cc: "gcc" , cxx: "g++" }
+          - { python: "3.9", os: "ubuntu-latest", session: "tests", cc: "gcc" , cxx: "g++" }
+          - { python: "3.8", os: "ubuntu-latest", session: "tests" , cc: "gcc" , cxx: "g++" }
+          - { python: "3.10", os: "macos-latest", session: "tests", cc: "clang" , cxx: "clang++" }
 
     env:
       NOXSESSION: ${{ matrix.session }}
@@ -55,5 +54,8 @@ jobs:
           nox --version
 
       - name: Run Nox
+        env:
+          CC: gcc
+          CXX: g++
         run: |
           nox --force-color --python=${{ matrix.python }}
