@@ -47,6 +47,7 @@ jobs:
           pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
           poetry --version
 
-      - name: Run Nox
+      - name: Run Tests
         run: |
-          CC=g++ poetry install 
+          CC=g++ poetry install  &&  poetry run pytest tests
+
