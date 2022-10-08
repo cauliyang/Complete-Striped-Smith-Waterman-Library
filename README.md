@@ -21,14 +21,50 @@ $ pip install mssw
 
 ## Usage
 
+### Example 1: Alignment with default filter and score matrix
+
+```python
+import mssw
+
+reference = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
+query = "CTGAGCCGGTAAATC"
+# default match: int = 2, mismatch: int = 2, gap_open: int = 3, gap_extend: int = 1
+aligner = mssw.Aligner()
+aligner_filter = mssw.Filter()
+alignment = aligner.align(query, reference, aligner_filter)
+```
+
+### Example 2: Alignment with default filter and score matrix
+
 ```python
 import mssw
 
 reference = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
 query = "CTGAGCCGGTAAATC"
 aligner = mssw.Aligner()
-aligner_filter = mssw.Filter()
-alignment = aligner.align(query, reference, aligner_filter)
+alignment = aligner.align(query, reference)
+```
+
+### Example 3: Alignment with filter But custom gap open and gap extension
+
+```python
+import mssw
+
+reference = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
+query = "CTGAGCCGGTAAATC"
+aligner = mssw.Aligner(match=3, mismatch=1, gap_open=2, gap_extend=2)
+alignment = aligner.align(query, reference)
+```
+
+### Example 4: Alignment Result
+
+```python
+import mssw
+
+reference = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
+query = "CTGAGCCGGTAAATC"
+aligner = mssw.Aligner(match=3, mismatch=1, gap_open=2, gap_extend=2)
+alignment = aligner.align(query, reference)
 
 assert alignment.sw_score == 21
 assert alignment.sw_score_next_best == 2
