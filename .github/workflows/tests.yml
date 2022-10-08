@@ -53,4 +53,4 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m pytest -vl -x tests
+          poetry run pytext -vl -x tests
