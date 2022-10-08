@@ -49,7 +49,7 @@ def build(setup_kwargs):
                     + list(get_files("bindings", [".cpp", ".c"])),
             include_dirs=["src/mssw/src"],
             libraries=["m", "z"],
-            extra_comiple_args=get_extra_options(),
+            extra_compile_args=get_extra_options(),
         )
     ]
     setup_kwargs.update(
