@@ -12,7 +12,6 @@ classifiers = [
     'Intended Audience :: End Users/Desktop',
     'Intended Audience :: Developers',
     'Intended Audience :: System Administrators',
-    'Operating System :: Microsoft :: Windows',
     'Operating System :: Unix',
     'Operating System :: MacOS',
     'Programming Language :: Python',
