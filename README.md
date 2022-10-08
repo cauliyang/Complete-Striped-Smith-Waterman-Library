@@ -20,6 +20,17 @@
 $ pip install mssw
 ```
 
+## Benchmark
+
+### With BioPython
+
+| Query Length | Reference Length | mssw Time (s) | bio python Time (s) | Speedup  |
+| ------------ | ---------------- | ------------- | ------------------- | :------- |
+| 15           | 39               | 1.912117e-05  | 7.925034e-05        | 5.144638 |
+| 150          | 390              | 1.000643e-04  | 7.278442e-04        | 7.273767 |
+| 1500         | 3900             | 1.021543e-02  | 6.737752e-02        | 6.595665 |
+| 15000        | 39000            | 8.783410e-01  | 6.299419e+00        | 7.171952 |
+
 ## Usage
 
 ### Example 1: Alignment with default filter and score matrix
@@ -77,14 +88,3 @@ assert alignment.ref_end_next_best == 0
 assert alignment.mismatches == 2
 assert alignment.cigar_string == "4=1X4=1I5="
 ```
-
-## Benchmark
-
-### With BioPython
-
-| Query Length | Reference Length | mssw Time (s) | bio python Time (s) | Speedup  |
-| ------------ | ---------------- | ------------- | ------------------- | :------- |
-| 15           | 39               | 1.912117e-05  | 7.925034e-05        | 5.144638 |
-| 150          | 390              | 1.000643e-04  | 7.278442e-04        | 7.273767 |
-| 1500         | 3900             | 1.021543e-02  | 6.737752e-02        | 6.595665 |
-| 15000        | 39000            | 8.783410e-01  | 6.299419e+00        | 7.171952 |
