@@ -12,6 +12,11 @@ from pathlib import Path
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 
+class MyExtension(Pybind11Extension):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 def get_extra_options() -> typing.List[str]:
     pla_info = platform.platform().split("-")
     for item in pla_info:
@@ -39,6 +44,7 @@ def build(setup_kwargs):
     ext_modules = [
         Pybind11Extension(
             "mssw._cpp",
+            language="c++",
             sources=["src/mssw/src/ssw.c", "src/mssw/src/ssw_cpp20.cpp"]
             + list(get_files("bindings", [".cpp", ".c"])),
             include_dirs=["src/mssw/src"],

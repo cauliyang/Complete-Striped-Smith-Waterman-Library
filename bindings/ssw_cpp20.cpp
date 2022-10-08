@@ -31,7 +31,7 @@ void bind_ssw_cpp20(std::function< pybind11::module &(std::string const &namespa
 		cl.def_readwrite("cigar_string", &StripedSmithWaterman::Alignment::cigar_string);
 		cl.def_readwrite("cigar", &StripedSmithWaterman::Alignment::cigar);
 		cl.def("Clear", (void (StripedSmithWaterman::Alignment::*)()) &StripedSmithWaterman::Alignment::Clear, "C++: StripedSmithWaterman::Alignment::Clear() --> void");
-		cl.def("assign", (struct StripedSmithWaterman::Alignment & (StripedSmithWaterman::Alignment::*)(const struct StripedSmithWaterman::Alignment &)) &StripedSmithWaterman::Alignment::operator=, "C++: StripedSmithWaterman::Alignment::operator=(const struct StripedSmithWaterman::Alignment &) --> struct StripedSmithWaterman::Alignment &", pybind11::return_value_policy::automatic, pybind11::arg(""));
+//		cl.def("assign", (struct StripedSmithWaterman::Alignment & (StripedSmithWaterman::Alignment::*)(const struct StripedSmithWaterman::Alignment &)) &StripedSmithWaterman::Alignment::operator=, "C++: StripedSmithWaterman::Alignment::operator=(const struct StripedSmithWaterman::Alignment &) --> struct StripedSmithWaterman::Alignment &", pybind11::return_value_policy::automatic, pybind11::arg(""));
 	}
 	{ // StripedSmithWaterman::Filter file:ssw_cpp20.hpp line:42
 		pybind11::class_<StripedSmithWaterman::Filter, std::shared_ptr<StripedSmithWaterman::Filter>> cl(M("StripedSmithWaterman"), "Filter", "" );
