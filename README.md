@@ -1,6 +1,7 @@
 [![pypi](https://img.shields.io/pypi/v/mssw.svg)][pypi status]
 [![status](https://img.shields.io/pypi/status/mssw.svg)][pypi status]
 [![python version](https://img.shields.io/pypi/pyversions/mssw)][pypi status]
+[![Tests](https://github.com/cauliyang/Complete-Striped-Smith-Waterman-Library/actions/workflows/tests.yml/badge.svg)](https://github.com/cauliyang/Complete-Striped-Smith-Waterman-Library/actions/workflows/tests.yml)
 [![Release](https://github.com/cauliyang/Complete-Striped-Smith-Waterman-Library/actions/workflows/release.yml/badge.svg)](https://github.com/cauliyang/Complete-Striped-Smith-Waterman-Library/actions/workflows/release.yml)
 
 [pypi status]: https://pypi.org/project/mssw/0.1.1/

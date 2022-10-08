@@ -26,7 +26,7 @@ def get_extra_options() -> typing.List[str]:
 
 
 def get_files(
-        path: typing.Union[Path, str], suffix: typing.List[str]
+    path: typing.Union[Path, str], suffix: typing.List[str]
 ) -> typing.Iterator[str]:
     """Get bindings."""
     if isinstance(path, str):
@@ -46,7 +46,7 @@ def build(setup_kwargs):
             "mssw._cpp",
             language="c++",
             sources=["src/mssw/src/ssw_cpp20.cpp", "src/mssw/src/ssw.c"]
-                    + list(get_files("bindings", [".cpp", ".c"])),
+            + list(get_files("bindings", [".cpp", ".c"])),
             include_dirs=["src/mssw/src"],
             libraries=["m", "z"],
             extra_compile_args=get_extra_options(),
