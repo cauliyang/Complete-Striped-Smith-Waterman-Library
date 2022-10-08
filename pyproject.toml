@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mssw"
-version = "0.1.2"
+version = "0.1.3"
 description = "Modern Cpp binding for complete-striped-smith-watern-library"
 authors = ["Yangyang Li <yangyang.li@northwestern.edu>"]
 license = "MIT"
@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 pybind11 = "^2.10.0"
 setuptools = "^65.4.1"
 

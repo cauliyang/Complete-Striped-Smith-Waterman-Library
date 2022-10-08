@@ -16,12 +16,10 @@ jobs:
           - { python: "3.9", os: "ubuntu-latest", session: "tests" }
           - { python: "3.8", os: "ubuntu-latest", session: "tests" }
           - { python: "3.7", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.6", os: "ubuntu-latest", session: "tests" }
           - { python: "3.10", os: "macos-latest", session: "tests" }
           - { python: "3.9", os: "macos-latest", session: "tests" }
           - { python: "3.8", os: "macos-latest", session: "tests" }
           - { python: "3.7", os: "macos-latest", session: "tests" }
-          - { python: "3.6", os: "macos-latest", session: "tests" }
 
     env:
       NOXSESSION: ${{ matrix.session }}
