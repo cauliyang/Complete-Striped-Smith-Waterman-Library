@@ -46,7 +46,7 @@ def build(setup_kwargs):
             "mssw._cpp",
             language="c++",
             sources=["src/mssw/src/ssw_cpp20.cpp", "src/mssw/src/ssw.c"]
-            + list(get_files("bindings", [".cpp", ".c"])),
+            + list(get_files("src/mssw/bindings", [".cpp", ".c"])),
             include_dirs=["src/mssw/src"],
             libraries=["m", "z"],
             extra_compile_args=get_extra_options(),
