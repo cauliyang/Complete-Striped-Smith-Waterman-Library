@@ -22,14 +22,14 @@ $ pip install mssw
 
 ## Benchmark
 
-The result is tested in Linux x86_64  4 cores and 4GB of memory.
+The result is tested in Linux x86_64 4 cores and 4GB of memory.
 
 ### With BioPython
 
 | Query Length | Reference Length | mssw Time (s) | bio python Time (s) | Speedup  |
 | ------------ | ---------------- | ------------- | ------------------- | :------- |
 | 15           | 39               | 4.470348e-05  | 1.424551e-04        | 3.186666 |
-| 150          | 390              | 2.179623e-04 |  2.270699e-03        | 10.41785 |
+| 150          | 390              | 2.179623e-04  | 2.270699e-03        | 10.41785 |
 | 1500         | 3900             | 1.665862e-02  | 1.534623e-01        | 9.212187 |
 | 15000        | 39000            | 1.696888e+00  | 1.574137e+01        | 9.276609 |
 
@@ -90,3 +90,17 @@ assert alignment.ref_end_next_best == 0
 assert alignment.mismatches == 2
 assert alignment.cigar_string == "4=1X4=1I5="
 ```
+
+### Example 5: Print Alignment Result
+
+```python
+import mssw
+
+reference = "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA"
+query = "CTGAGCCGGTAAATC"
+aligner = mssw.Aligner(match=3, mismatch=1, gap_open=2, gap_extend=2)
+alignment = aligner.align(query, reference)
+alignment.print()
+```
+
+![img.png](images/img.png)

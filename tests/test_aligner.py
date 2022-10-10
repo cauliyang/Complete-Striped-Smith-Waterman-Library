@@ -3,7 +3,7 @@ import mssw
 
 def print_alignment(alignment):
     print("===== SSW result =====\n")
-    print(f"Best Smith-Waterman score:\t{alignment.sw_score}\n")
+    print("Best Smith-Waterman score:\t{alignment.sw_score}\n")
     print(f"Next-best Smith-Waterman score:\t{alignment.sw_score_next_best}\n")
     print(f"Reference start:\t{alignment.ref_begin}\n")
     print(f"Reference end:\t{alignment.ref_end}\n")
@@ -21,7 +21,6 @@ def test_aligner():
     aligner = mssw.Aligner()
     aligner_filter = mssw.Filter()
     alignment = aligner.align(query, reference, aligner_filter)
-    print_alignment(alignment)
     assert alignment.sw_score == 21
     assert alignment.sw_score_next_best == 2
     assert alignment.ref_begin == 8
@@ -38,7 +37,6 @@ def test_aligner_default():
     query = "CTGAGCCGGTAAATC"
     aligner = mssw.Aligner()
     alignment = aligner.align(query, reference)
-    print_alignment(alignment)
     assert alignment.sw_score == 21
     assert alignment.sw_score_next_best == 2
     assert alignment.ref_begin == 8
@@ -56,3 +54,4 @@ def test_aligner_with_custom_score():
     aligner = mssw.Aligner(match=3, mismatch=10, gap_open=2, gap_extend=2)
     alignment = aligner.align(query, reference)
     assert alignment.cigar_string == "4=1I1D4=1I5="
+    alignment.print()

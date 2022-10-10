@@ -1,6 +1,5 @@
 """Bindings for ::StripedSmithWaterman namespace"""
-from __future__ import annotations
-import mssw._cpp.StripedSmithWaterman
+import mssw._cpp.StripedSmithWaterman # type: ignore
 import typing
 
 __all__ = [
